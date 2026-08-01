@@ -1,248 +1,334 @@
-<<<<<<< HEAD
-/*
-	Prologue by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
+/* =====================================================
+   Kundan Portfolio
+   main.js
+===================================================== */
 
-(function($) {
+/* ============================
+   Initialize AOS
+============================ */
 
-	var	$window = $(window),
-		$body = $('body'),
-		$nav = $('#nav');
+AOS.init({
+    duration: 900,
+    once: true,
+    easing: "ease-in-out"
+});
 
-	// Breakpoints.
-		breakpoints({
-			wide:      [ '961px',  '1880px' ],
-			normal:    [ '961px',  '1620px' ],
-			narrow:    [ '961px',  '1320px' ],
-			narrower:  [ '737px',  '960px'  ],
-			mobile:    [ null,     '736px'  ]
-		});
+/* ============================
+   Typing Effect
+============================ */
 
-	// Play initial animations on page load.
-		$window.on('load', function() {
-			window.setTimeout(function() {
-				$body.removeClass('is-preload');
-			}, 100);
-		});
+const roles = [
+    "Staff Software Engineer",
+    "Java Backend Architect",
+    "Microservices Specialist",
+    "AI / RAG Engineer",
+    "Distributed Systems Enthusiast"
+];
 
-	// Nav.
-		var $nav_a = $nav.find('a');
+const typingElement = document.getElementById("typing-text");
 
-		$nav_a
-			.addClass('scrolly')
-			.on('click', function(e) {
+let roleIndex = 0;
+let charIndex = 0;
+let deleting = false;
 
-				var $this = $(this);
+function typeRole() {
 
-				// External link? Bail.
-					if ($this.attr('href').charAt(0) != '#')
-						return;
+    if (!typingElement) return;
 
-				// Prevent default.
-					e.preventDefault();
+    const currentRole = roles[roleIndex];
 
-				// Deactivate all links.
-					$nav_a.removeClass('active');
+    if (!deleting) {
 
-				// Activate link *and* lock it (so Scrollex doesn't try to activate other links as we're scrolling to this one's section).
-					$this
-						.addClass('active')
-						.addClass('active-locked');
+        typingElement.textContent =
+            currentRole.substring(0, charIndex++);
 
-			})
-			.each(function() {
+        if (charIndex > currentRole.length) {
 
-				var	$this = $(this),
-					id = $this.attr('href'),
-					$section = $(id);
+            deleting = true;
 
-				// No section for this link? Bail.
-					if ($section.length < 1)
-						return;
+            setTimeout(typeRole, 1800);
 
-				// Scrollex.
-					$section.scrollex({
-						mode: 'middle',
-						top: '-10vh',
-						bottom: '-10vh',
-						initialize: function() {
+            return;
+        }
 
-							// Deactivate section.
-								$section.addClass('inactive');
+    } else {
 
-						},
-						enter: function() {
+        typingElement.textContent =
+            currentRole.substring(0, charIndex--);
 
-							// Activate section.
-								$section.removeClass('inactive');
+        if (charIndex === 0) {
 
-							// No locked links? Deactivate all links and activate this section's one.
-								if ($nav_a.filter('.active-locked').length == 0) {
+            deleting = false;
 
-									$nav_a.removeClass('active');
-									$this.addClass('active');
+            roleIndex++;
 
-								}
+            if (roleIndex >= roles.length)
+                roleIndex = 0;
+        }
+    }
 
-							// Otherwise, if this section's link is the one that's locked, unlock it.
-								else if ($this.hasClass('active-locked'))
-									$this.removeClass('active-locked');
+    setTimeout(typeRole, deleting ? 40 : 90);
+}
 
-						}
-					});
+typeRole();
 
-			});
+/* ============================
+   Dark Mode
+============================ */
 
-	// Scrolly.
-		$('.scrolly').scrolly();
+const toggle = document.getElementById("theme-toggle");
 
-	// Header (narrower + mobile).
+const body = document.body;
 
-		// Toggle.
-			$(
-				'<div id="headerToggle">' +
-					'<a href="#header" class="toggle"></a>' +
-				'</div>'
-			)
-				.appendTo($body);
+const currentTheme = localStorage.getItem("theme");
 
-		// Header.
-			$('#header')
-				.panel({
-					delay: 500,
-					hideOnClick: true,
-					hideOnSwipe: true,
-					resetScroll: true,
-					resetForms: true,
-					side: 'left',
-					target: $body,
-					visibleClass: 'header-visible'
-				});
+if (currentTheme === "light") {
 
-=======
-/*
-	Prologue by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
+    body.classList.add("light-mode");
 
-(function($) {
+    toggle.innerHTML =
+        '<i class="fa-solid fa-sun"></i>';
+}
 
-	var	$window = $(window),
-		$body = $('body'),
-		$nav = $('#nav');
+toggle.addEventListener("click", () => {
 
-	// Breakpoints.
-		breakpoints({
-			wide:      [ '961px',  '1880px' ],
-			normal:    [ '961px',  '1620px' ],
-			narrow:    [ '961px',  '1320px' ],
-			narrower:  [ '737px',  '960px'  ],
-			mobile:    [ null,     '736px'  ]
-		});
+    body.classList.toggle("light-mode");
 
-	// Play initial animations on page load.
-		$window.on('load', function() {
-			window.setTimeout(function() {
-				$body.removeClass('is-preload');
-			}, 100);
-		});
+    if (body.classList.contains("light-mode")) {
 
-	// Nav.
-		var $nav_a = $nav.find('a');
+        toggle.innerHTML =
+            '<i class="fa-solid fa-sun"></i>';
 
-		$nav_a
-			.addClass('scrolly')
-			.on('click', function(e) {
+        localStorage.setItem("theme", "light");
 
-				var $this = $(this);
+    } else {
 
-				// External link? Bail.
-					if ($this.attr('href').charAt(0) != '#')
-						return;
+        toggle.innerHTML =
+            '<i class="fa-solid fa-moon"></i>';
 
-				// Prevent default.
-					e.preventDefault();
+        localStorage.setItem("theme", "dark");
+    }
 
-				// Deactivate all links.
-					$nav_a.removeClass('active');
+});
 
-				// Activate link *and* lock it (so Scrollex doesn't try to activate other links as we're scrolling to this one's section).
-					$this
-						.addClass('active')
-						.addClass('active-locked');
+/* ============================
+   Active Navigation
+============================ */
 
-			})
-			.each(function() {
+const sections = document.querySelectorAll("section");
 
-				var	$this = $(this),
-					id = $this.attr('href'),
-					$section = $(id);
+const navLinks = document.querySelectorAll(".nav-links a");
 
-				// No section for this link? Bail.
-					if ($section.length < 1)
-						return;
+window.addEventListener("scroll", () => {
 
-				// Scrollex.
-					$section.scrollex({
-						mode: 'middle',
-						top: '-10vh',
-						bottom: '-10vh',
-						initialize: function() {
+    let current = "";
 
-							// Deactivate section.
-								$section.addClass('inactive');
+    sections.forEach(section => {
 
-						},
-						enter: function() {
+        const sectionTop = section.offsetTop - 150;
 
-							// Activate section.
-								$section.removeClass('inactive');
+        if (pageYOffset >= sectionTop) {
 
-							// No locked links? Deactivate all links and activate this section's one.
-								if ($nav_a.filter('.active-locked').length == 0) {
+            current = section.getAttribute("id");
+        }
 
-									$nav_a.removeClass('active');
-									$this.addClass('active');
+    });
 
-								}
+    navLinks.forEach(link => {
 
-							// Otherwise, if this section's link is the one that's locked, unlock it.
-								else if ($this.hasClass('active-locked'))
-									$this.removeClass('active-locked');
+        link.classList.remove("active");
 
-						}
-					});
+        if (link.getAttribute("href") === "#" + current) {
 
-			});
+            link.classList.add("active");
+        }
 
-	// Scrolly.
-		$('.scrolly').scrolly();
+    });
 
-	// Header (narrower + mobile).
+});
 
-		// Toggle.
-			$(
-				'<div id="headerToggle">' +
-					'<a href="#header" class="toggle"></a>' +
-				'</div>'
-			)
-				.appendTo($body);
+/* ============================
+   Navbar Shadow
+============================ */
 
-		// Header.
-			$('#header')
-				.panel({
-					delay: 500,
-					hideOnClick: true,
-					hideOnSwipe: true,
-					resetScroll: true,
-					resetForms: true,
-					side: 'left',
-					target: $body,
-					visibleClass: 'header-visible'
-				});
+const header = document.querySelector("header");
 
->>>>>>> 5738303c58913007006385d92d8f20811f4dc7bf
-})(jQuery);
+window.addEventListener("scroll", () => {
+
+    if (window.scrollY > 40) {
+
+        header.style.boxShadow =
+            "0 15px 35px rgba(0,0,0,.25)";
+
+    } else {
+
+        header.style.boxShadow = "none";
+    }
+
+});
+
+/* ============================
+   Scroll Progress Bar
+============================ */
+
+const progress = document.createElement("div");
+
+progress.id = "scroll-progress";
+
+document.body.appendChild(progress);
+
+window.addEventListener("scroll", () => {
+
+    const totalHeight =
+        document.body.scrollHeight -
+        window.innerHeight;
+
+    const progressHeight =
+        (window.pageYOffset / totalHeight) * 100;
+
+    progress.style.width = progressHeight + "%";
+
+});
+
+/* ============================
+   Hero Fade
+============================ */
+
+const hero = document.querySelector("#hero");
+
+window.addEventListener("scroll", () => {
+
+    const value = window.scrollY;
+
+    hero.style.opacity = 1 - value / 700;
+
+});
+
+/* ============================
+   Skill Hover Animation
+============================ */
+
+const skillCards =
+    document.querySelectorAll(".skill-card");
+
+skillCards.forEach(card => {
+
+    card.addEventListener("mouseenter", () => {
+
+        card.style.transform =
+            "translateY(-12px) scale(1.04)";
+
+    });
+
+    card.addEventListener("mouseleave", () => {
+
+        card.style.transform =
+            "translateY(0px)";
+    });
+
+});
+
+/* ============================
+   Project Card Animation
+============================ */
+
+const projects =
+    document.querySelectorAll(".project-card");
+
+projects.forEach(project => {
+
+    project.addEventListener("mousemove", (e) => {
+
+        const rect =
+            project.getBoundingClientRect();
+
+        const x =
+            e.clientX - rect.left;
+
+        const y =
+            e.clientY - rect.top;
+
+        project.style.background =
+            `radial-gradient(circle at ${x}px ${y}px,
+            rgba(56,189,248,.18),
+            #182233)`;
+
+    });
+
+    project.addEventListener("mouseleave", () => {
+
+        project.style.background = "#182233";
+
+    });
+
+});
+
+/* ============================
+   Reveal Timeline
+============================ */
+
+const observer = new IntersectionObserver(entries => {
+
+    entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+
+            entry.target.classList.add("show");
+        }
+
+    });
+
+}, {
+
+    threshold: .15
+
+});
+
+document.querySelectorAll(".timeline-item")
+    .forEach(item => {
+
+        observer.observe(item);
+
+    });
+
+/* ============================
+   Smooth Scroll
+============================ */
+
+document.querySelectorAll('a[href^="#"]')
+    .forEach(anchor => {
+
+        anchor.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            document.querySelector(
+                this.getAttribute("href")
+            ).scrollIntoView({
+
+                behavior: "smooth"
+
+            });
+
+        });
+
+    });
+
+/* ============================
+   Footer Year
+============================ */
+
+const footer =
+    document.querySelector("footer p");
+
+if (footer) {
+
+    footer.innerHTML =
+        "© " + new Date().getFullYear() +
+        " Kundan Kr. Thakur • Built with ❤️ using HTML, CSS & JavaScript";
+}
+
+console.log("%cWelcome Recruiter 👋",
+    "color:#38bdf8;font-size:22px;font-weight:bold");
+
+console.log("Portfolio designed by Kundan Kr. Thakur");
