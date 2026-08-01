@@ -1,122 +1,95 @@
-/* =====================================================
-   Kundan Portfolio
-   main.js
-===================================================== */
+// ===============================
+// Portfolio Main JavaScript
+// ===============================
 
-/* ============================
-   Initialize AOS
-============================ */
-
-AOS.init({
-    duration: 900,
-    once: true,
-    easing: "ease-in-out"
-});
-
-/* ============================
-   Typing Effect
-============================ */
+// Typing Effect
+const typingText = document.getElementById("typing-text");
 
 const roles = [
     "Staff Software Engineer",
-    "Java Backend Architect",
+    "Java Backend Engineer",
     "Microservices Specialist",
     "AI / RAG Engineer",
-    "Distributed Systems Enthusiast"
+    "System Design Enthusiast"
 ];
-
-const typingElement = document.getElementById("typing-text");
 
 let roleIndex = 0;
 let charIndex = 0;
-let deleting = false;
+let isDeleting = false;
 
-function typeRole() {
+function typeEffect() {
 
-    if (!typingElement) return;
+    if (!typingText) return;
 
-    const currentRole = roles[roleIndex];
+    const current = roles[roleIndex];
 
-    if (!deleting) {
+    if (!isDeleting) {
 
-        typingElement.textContent =
-            currentRole.substring(0, charIndex++);
+        typingText.textContent = current.substring(0, charIndex);
+        charIndex++;
 
-        if (charIndex > currentRole.length) {
+        if (charIndex > current.length) {
 
-            deleting = true;
+            isDeleting = true;
 
-            setTimeout(typeRole, 1800);
+            setTimeout(typeEffect, 1800);
 
             return;
         }
 
     } else {
 
-        typingElement.textContent =
-            currentRole.substring(0, charIndex--);
+        typingText.textContent = current.substring(0, charIndex);
 
-        if (charIndex === 0) {
+        charIndex--;
 
-            deleting = false;
+        if (charIndex < 0) {
+
+            isDeleting = false;
 
             roleIndex++;
 
             if (roleIndex >= roles.length)
                 roleIndex = 0;
+
+            charIndex = 0;
         }
+
     }
 
-    setTimeout(typeRole, deleting ? 40 : 90);
+    setTimeout(typeEffect, isDeleting ? 45 : 90);
+
 }
 
-typeRole();
+typeEffect();
 
-/* ============================
-   Dark Mode
-============================ */
 
-const toggle = document.getElementById("theme-toggle");
+// =======================================
+// Smooth Scroll
+// =======================================
 
-const body = document.body;
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
-const currentTheme = localStorage.getItem("theme");
+    anchor.addEventListener("click", function (e) {
 
-if (currentTheme === "light") {
+        e.preventDefault();
 
-    body.classList.add("light-mode");
+        document.querySelector(this.getAttribute("href")).scrollIntoView({
 
-    toggle.innerHTML =
-        '<i class="fa-solid fa-sun"></i>';
-}
+            behavior: "smooth"
 
-toggle.addEventListener("click", () => {
+        });
 
-    body.classList.toggle("light-mode");
-
-    if (body.classList.contains("light-mode")) {
-
-        toggle.innerHTML =
-            '<i class="fa-solid fa-sun"></i>';
-
-        localStorage.setItem("theme", "light");
-
-    } else {
-
-        toggle.innerHTML =
-            '<i class="fa-solid fa-moon"></i>';
-
-        localStorage.setItem("theme", "dark");
-    }
+    });
 
 });
 
-/* ============================
-   Active Navigation
-============================ */
+
+// =======================================
+// Active Navigation
+// =======================================
 
 const sections = document.querySelectorAll("section");
-
 const navLinks = document.querySelectorAll(".nav-links a");
 
 window.addEventListener("scroll", () => {
@@ -125,11 +98,12 @@ window.addEventListener("scroll", () => {
 
     sections.forEach(section => {
 
-        const sectionTop = section.offsetTop - 150;
+        const sectionTop = section.offsetTop - 120;
 
-        if (pageYOffset >= sectionTop) {
+        if (window.scrollY >= sectionTop) {
 
             current = section.getAttribute("id");
+
         }
 
     });
@@ -141,194 +115,122 @@ window.addEventListener("scroll", () => {
         if (link.getAttribute("href") === "#" + current) {
 
             link.classList.add("active");
+
         }
 
     });
 
 });
 
-/* ============================
-   Navbar Shadow
-============================ */
+
+// =======================================
+// Navbar Shadow
+// =======================================
 
 const header = document.querySelector("header");
 
 window.addEventListener("scroll", () => {
 
-    if (window.scrollY > 40) {
+    if (window.scrollY > 30) {
 
         header.style.boxShadow =
-            "0 15px 35px rgba(0,0,0,.25)";
+            "0 10px 30px rgba(0,0,0,.25)";
 
     } else {
 
         header.style.boxShadow = "none";
+
     }
 
 });
 
-/* ============================
-   Scroll Progress Bar
-============================ */
 
-const progress = document.createElement("div");
+// =======================================
+// Scroll Progress Bar
+// =======================================
 
-progress.id = "scroll-progress";
+const progressBar = document.createElement("div");
 
-document.body.appendChild(progress);
+progressBar.style.position = "fixed";
+progressBar.style.left = "0";
+progressBar.style.top = "0";
+progressBar.style.height = "4px";
+progressBar.style.width = "0%";
+progressBar.style.zIndex = "99999";
+progressBar.style.background = "#38bdf8";
+
+document.body.appendChild(progressBar);
 
 window.addEventListener("scroll", () => {
 
     const totalHeight =
-        document.body.scrollHeight -
+        document.documentElement.scrollHeight -
         window.innerHeight;
 
-    const progressHeight =
-        (window.pageYOffset / totalHeight) * 100;
+    const progress =
+        (window.scrollY / totalHeight) * 100;
 
-    progress.style.width = progressHeight + "%";
-
-});
-
-/* ============================
-   Hero Fade
-============================ */
-
-const hero = document.querySelector("#hero");
-
-window.addEventListener("scroll", () => {
-
-    const value = window.scrollY;
-
-    hero.style.opacity = 1 - value / 700;
+    progressBar.style.width = progress + "%";
 
 });
 
-/* ============================
-   Skill Hover Animation
-============================ */
 
-const skillCards =
-    document.querySelectorAll(".skill-card");
+// =======================================
+// Reveal Animation
+// =======================================
 
-skillCards.forEach(card => {
-
-    card.addEventListener("mouseenter", () => {
-
-        card.style.transform =
-            "translateY(-12px) scale(1.04)";
-
-    });
-
-    card.addEventListener("mouseleave", () => {
-
-        card.style.transform =
-            "translateY(0px)";
-    });
-
-});
-
-/* ============================
-   Project Card Animation
-============================ */
-
-const projects =
-    document.querySelectorAll(".project-card");
-
-projects.forEach(project => {
-
-    project.addEventListener("mousemove", (e) => {
-
-        const rect =
-            project.getBoundingClientRect();
-
-        const x =
-            e.clientX - rect.left;
-
-        const y =
-            e.clientY - rect.top;
-
-        project.style.background =
-            `radial-gradient(circle at ${x}px ${y}px,
-            rgba(56,189,248,.18),
-            #182233)`;
-
-    });
-
-    project.addEventListener("mouseleave", () => {
-
-        project.style.background = "#182233";
-
-    });
-
-});
-
-/* ============================
-   Reveal Timeline
-============================ */
-
-const observer = new IntersectionObserver(entries => {
+const observer = new IntersectionObserver((entries) => {
 
     entries.forEach(entry => {
 
         if (entry.isIntersecting) {
 
-            entry.target.classList.add("show");
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0px)";
+
         }
 
     });
 
 }, {
 
-    threshold: .15
+    threshold: 0.15
 
 });
 
-document.querySelectorAll(".timeline-item")
-    .forEach(item => {
+document.querySelectorAll(".timeline-item,.skill-card,.project-card")
+.forEach(item => {
 
-        observer.observe(item);
+    item.style.opacity = "0";
+    item.style.transform = "translateY(40px)";
+    item.style.transition = ".6s";
 
-    });
+    observer.observe(item);
 
-/* ============================
-   Smooth Scroll
-============================ */
+});
 
-document.querySelectorAll('a[href^="#"]')
-    .forEach(anchor => {
 
-        anchor.addEventListener("click", function (e) {
+// =======================================
+// Footer Year
+// =======================================
 
-            e.preventDefault();
-
-            document.querySelector(
-                this.getAttribute("href")
-            ).scrollIntoView({
-
-                behavior: "smooth"
-
-            });
-
-        });
-
-    });
-
-/* ============================
-   Footer Year
-============================ */
-
-const footer =
-    document.querySelector("footer p");
+const footer = document.querySelector("footer p");
 
 if (footer) {
 
     footer.innerHTML =
-        "© " + new Date().getFullYear() +
-        " Kundan Kr. Thakur • Built with ❤️ using HTML, CSS & JavaScript";
+        `© ${new Date().getFullYear()} Kundan Kr. Thakur`;
+
 }
 
-console.log("%cWelcome Recruiter 👋",
-    "color:#38bdf8;font-size:22px;font-weight:bold");
 
-console.log("Portfolio designed by Kundan Kr. Thakur");
+// =======================================
+// Console Message
+// =======================================
+
+console.log(
+    "%cWelcome 👋",
+    "font-size:22px;color:#38bdf8;font-weight:bold"
+);
+
+console.log("Portfolio built by Kundan Kr. Thakur");
